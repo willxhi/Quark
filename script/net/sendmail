@@ -1,0 +1,36 @@
+#!/bin/sh
+# Author : William Xhinar <acc4itc@gmail.com>
+# Documentation Logs
+# 2016-02-25 - WmX - Create this script
+# 2016-03-02 - WmX - Fixing send mail
+##
+# $1 = random number
+# $2 = trace
+##
+_MYDIR=$(dirname $(readlink -f $0))
+
+if [ -n "$1" ]; then
+  LOGDATE=$(date +"%Y%m/%d.%H")
+else
+  LOGDATE=$(date +"%Y%m/%d.%H" -d "1 hour ago")
+fi
+
+LOGFILE=$_MYDIR/log/$LOGDATE
+
+if [ -n "$1" ]; then
+  MAILSUBJ=$(grep "$1" $LOGFILE | sed 's/.*# //;s/[ \t]/x/g')
+else
+  MAILSUBJ=`hostname`"-Log-"$LOGDATE
+fi
+
+ISSEND=`tail -n 1 $LOGFILE`
+
+if ! [ "${ISSEND:0:4}" = "SENT" ]; then
+  MAILALIAS=`hostname`
+  MAILSEND=`cat $_MYDIR/emailsender`
+  MAILRECP=`sed -n "/\["desktop"\]/,/\[/p" $_MYDIR/listemailrec.txt | head -n-2 | tail -n+2 | grep -v "#"`
+  MAILCMD=$( [[ "$2" = "trace" ]] && echo " -v " || echo " " )
+  MAILCMD="mail"$MAILCMD"-s \"$MAILSUBJ\" -r$MAILALIAS'<'$MAILSEND'>' $MAILRECP"
+  grep "$1" $LOGFILE | sed 's/'"$1"'//;s/^[[:space:]]*//' | eval $MAILCMD
+  if [ -z "$1" ]; then echo SENT >> $LOGFILE; fi
+fi

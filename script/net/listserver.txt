@@ -1,0 +1,16 @@
+http://192.168.51.215:8888/
+http://192.168.51.5:9090/itcenterprise/
+http://192.168.51.5:7070/itcenterprise/
+http://192.168.51.193:8888/forms/frmservlet?config=itc
+http://192.168.51.194:8888/forms/frmservlet?config=itckvn
+http://192.168.51.237:8888/forms/frmservlet?config=itc
+http://192.168.0.2/forms90/f90servlet?FORM=c:/mis3.5/login.fmx
+http://192.168.51.215:8888/itcsuite/
+http://192.168.51.6/
+http://192.168.51.5:8888/itislive/
+http://192.168.51.24/
+http://192.168.51.5:9090/itcworklist/
+http://www.itcfinance.com/
+http://192.168.51.254:8888/
+https://192.168.51.26:8006/
+https://192.168.51.190:8006/

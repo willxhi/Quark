@@ -1,0 +1,11 @@
+# First exclude everything
+*
+# then include below
+!/.gitignore
+script
+script/*
+script/conf/*
+script/net/*
+script/test/*
+script/utils/*
+

@@ -1,0 +1,49 @@
+#!/bin/bash
+
+export DISPLAY=:0.0
+export $(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$(pgrep -o i3)/environ )
+
+while read p; do
+if [ -n "$1" ]; then
+  svr=$1
+else
+  svr=$p
+fi
+retVal=$(ssh -Tq oracle@$svr << \ENDSSH
+#. .db_profile
+case `hostname` in "venus"|"jupiter") . .db_profile; ;;  esac
+#. chkresptime2.sh
+sqlplus -s / as sysdba > timelog << EOF
+SET SERVEROUTPUT ON
+SET FEEDBACK OFF
+DECLARE
+  tab_count NUMBER;
+  t1 NUMBER;
+  t2 NUMBER;
+BEGIN
+  t1 := dbms_utility.get_time;
+  SELECT COUNT(*) INTO tab_count
+  FROM all_objects;
+  t2 := dbms_utility.get_time;
+  dbms_output.put_line( ((t2-t1)/100));
+  --DBMS_OUTPUT.PUT_LINE(tab_count);
+END;
+/
+EXIT
+EOF
+
+cat timelog
+ENDSSH
+)
+	echo -e $p"\t"$retVal
+	if (( $(echo "${retVal} > 2" | bc) == 1 )); then
+		ALLDOWN="$ALLDOWN"$'\n'$(printf "%s\t%s\n" $p $retVal)
+	fi
+if [ -n "$1" ]; then break; fi
+done <~/.scr/net/listoradb.txt
+
+if ! [ -z "$ALLDOWN" ]; then
+	notify-send -t 1000 --icon=gtk-info OraDBCheck "$ALLDOWN"
+else
+  notify-send -t 1000 --icon=gtk-info OraDBCheck "All OK"
+fi

@@ -1,0 +1,1 @@
+rsync -avhPW .scr/net/ -e 'ssh -p 4422' root@quark:/w01/script/net/ --exclude log --delete
