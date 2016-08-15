@@ -3,13 +3,29 @@
 # Documentation Logs
 # 2016-02-24 - WmX - Create this script
 # 2016-02-29 - WmX - Adding hostname
+# 2016-07-04 - WmX - Quark run if PandArx off
 ##
 _MYDIR=$(dirname $(readlink -f $0))
-i="5."; _MYRANDOM=$(echo $RANDOM$RANDOM | cut -c1-4) 
-if [ `hostname` = "quark" ]; then  mode="server"; else mode="desktop"; fi
+_MYLOCAL='PandArx'
+
+i="5."; _MYRANDOM=$(echo $RANDOM$RANDOM | cut -c1-4)
+if [ `hostname` = "quark" ]; then
+  mode="server"
+  if [ ${1-partial} = "partial" ]; then
+    if ping -c 1 -w 5 $_MYLOCAL &>/dev/null; then
+      exit 1
+    else
+      mode="server"
+    fi
+  fi
+else
+  mode="desktop"
+fi
+
 $_MYDIR/chk1ping.sh  $mode"_"$_MYRANDOM `hostname`"-1/"$i"Ping   >>" 
 $_MYDIR/chk2urlx.sh  $mode"_"$_MYRANDOM `hostname`"-2/"$i"URL    >>"
 $_MYDIR/chk3gfxx.sh  $mode"_"$_MYRANDOM `hostname`"-3/"$i"GF     >>"
 $_MYDIR/chk4orax.sh  $mode"_"$_MYRANDOM `hostname`"-4/"$i"OraDB  >>"
 $_MYDIR/chk5posx.sh  $mode"_"$_MYRANDOM `hostname`"-5/"$i"PosIdm >>"
+$_MYDIR/chk6repx.sh  $mode"_"$_MYRANDOM `hostname`"-6/"$i"OraRep >>"
 #$_MYDIR/sendmail $_MYRANDOM

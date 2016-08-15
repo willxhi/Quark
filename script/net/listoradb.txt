@@ -1,5 +1,5 @@
 venus
 mars
 sirius
-jupiter
+#jupiter
 quark

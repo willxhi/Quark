@@ -50,6 +50,4 @@ if [ -n "$1" ] && [ "${1%_*}" = "desktop" ] ; then
 fi
 
 #send mail if down
-echo ${1#*_}
-echo ${_MYNAME%.*}
 if [ -n "$ALLDOWN" ]; then $_MYDIR/sendmail ${1#*_}${_MYNAME%.*}; fi

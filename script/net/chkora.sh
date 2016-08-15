@@ -4,7 +4,7 @@
 # 2016-02-26 - WmX - Finishing this script
 ##
 svr=${1:-'venus'}
-
+#echo $svr
 retVal=$(ssh -Tq oracle@$svr << \ENDSSH
   #. .db_profile
   case `hostname` in "venus"|"jupiter") . .db_profile; ;;  esac
@@ -32,7 +32,13 @@ retVal=$(ssh -Tq oracle@$svr << \ENDSSH
   EXIT
 	EOF
   
-  cat timelog
+  tmpVal=$(head -n 1 timelog)
+  if [ "$tmpVal"="DECLARE" ]; then
+    cat timelog
+#    head -n 4 timelog | tail -n 1
+  else
+    echo $tmpVal
+  fi
 ENDSSH
 )
 

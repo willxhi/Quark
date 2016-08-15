@@ -1,1 +1,6 @@
-rsync -avhPW .scr/net/ -e 'ssh -p 4422' root@quark:/w01/script/net/ --exclude log --delete
+if [ -z $1 ]; then
+  _view_or_delete = '--dry-run'
+else
+  _view_or_delete = '--delete'
+fi
+  rsync -avhPW .scr/net/ -e 'ssh -p 4422' root@quark:/w01/script/net/ --exclude 'log*' $_view_or_delete

@@ -12,24 +12,29 @@ LOGDIR=$_MYDIR/log/$(date +"%Y%m")
 $_MYPARENTDIR/utils/wi_mkdir.sh $LOGDIR "$2"
 
 while read p; do
-  chktimeout=`timeout 1m $_MYDIR/chkora.sh $p`
-  if [ "$2" = "trace" ]; then echo -e $p"\t"$chktimeout; fi
-
-	if [ -n "$chktimeout" ]; then
-    #begin check timeout
-		echo $chktimeout
-		if (( $(echo "${chktimeout% *} > 1" | bc) == 1 )); then
-      ALLDOWN="$ALLDOWN"$'\n'$(printf "%s\t%s\n" $p "timeout" ${chktimeout% *})
-		fi
-    #end check timeout
-    #begin check session
-		if (( $(echo "${chktimeout#* } > 250" | bc) == 1 )); then
-      ALLDOWN="$ALLDOWN"$'\n'$(printf "%s\t%s\t%s\n" $p "session" ${chktimeout#* })
-    fi 
-    #end check session
-	else
- 		ALLDOWN="$ALLDOWN"$'\n'$(printf "%s\t%s\n" $p timeout)
-	fi
+  if ! [ "${p:0:1}" = "#" ]; then    
+    chktimeout=`timeout 1m $_MYDIR/chkora.sh $p`
+    if [ "$2" = "trace" ]; then echo -e $p"\t"$chktimeout; fi
+  
+  	if [ -n "$chktimeout" ]; then
+      numpattern='^[0-9]+$'
+  #    if [[ $chktimeout =~ $numpattern ]]; then
+        #echo ${chktimeout% *}
+        #begin check timeout if number
+    		if (( $(echo "${chktimeout% *} > 1" | bc) == 1 )); then
+          ALLDOWN="$ALLDOWN"$'\n'$(printf "%s\t%s\n" $p "timeout" ${chktimeout% *})
+  		  fi
+        #end check timeout
+        #begin check session
+    		if (( $(echo "${chktimeout#* } > 250" | bc) == 1 )); then
+          ALLDOWN="$ALLDOWN"$'\n'$(printf "%s\t%s\t%s\n" $p "session" ${chktimeout#* })
+        fi 
+        #end check session
+  #    fi
+  	else
+   		ALLDOWN="$ALLDOWN"$'\n'$(printf "%s\t%s\n" $p timeout)
+  	fi
+  fi
 done <$_MYDIR/listoradb.txt
 
 if ! [ -z "$ALLDOWN" ]; then
