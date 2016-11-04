@@ -4,8 +4,8 @@ acc4itc@gmail.com
 #shiverwind.frost@gmail.com
 
 [server]
-pati.saham@gmail.com
-itcserv.notif@gmail.com
-william@itcfinance.com
+#itcserv.notif@gmail.com
+#william@itcfinance.com
+acc4itc@gmail.com
 
 [end]

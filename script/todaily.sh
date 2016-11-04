@@ -9,6 +9,7 @@
 # 2016-01-05 - WmX - Fix if mount folder not mounted, then syncit to other folder
 # 2016-04-01 - WmX - Add option --no-inc-recursive to reduce memory used
 # 2016-04-19 - WmX - Add backup 51.198 (mysql)
+# 2016-11-01 - WmX - Add backup 0.3 (j)
 ##
 _MYDIR=$(dirname $(readlink -f $0))
 _MYPARENTDIR=$(dirname "$_MYDIR")
@@ -38,6 +39,7 @@ fi
 $_MYDIR/utils/wi_mkdir.sh $BCKDIR'51.55/'$THISMONTH
 $_MYDIR/utils/wi_mkdir.sh $BCKDIR'51.59/'$THISMONTH
 $_MYDIR/utils/wi_mkdir.sh $BCKDIR'51.198/'$THISMONTH
+$_MYDIR/utils/wi_mkdir.sh $BCKDIR'0.3/'$THISMONTH
 
 if [ "$1" = "rsv" ]; then
 	rsv=--remove-source-files
@@ -77,6 +79,7 @@ loopit(){
 loopit '51.59' $1
 loopit '51.55' $1
 loopit '51.198' $1
+loopit '0.3' $1
 
 echo -e "*finish \t $(date)"
 c_end_time_sec=`date +%s`

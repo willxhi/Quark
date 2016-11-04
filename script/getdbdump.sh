@@ -6,6 +6,7 @@
 # 2015-11-30 - WmX - Fix path location for LOGDIR if script change path, now using $_MYDIR
 #										 Add new variable _MYPARENTDIR for use the relative path to variable BCKDIR
 # 2016-04-01 - WmX - Add option --no-inc-recursive to reduce memory used
+# 2016-09-08 - WmX - Add get db dump from 0.3 (jkt)
 ##
 _MYDIR=$(dirname $(readlink -f $0))
 _MYPARENTDIR=$(dirname "$_MYDIR")
@@ -20,6 +21,7 @@ $_MYDIR/utils/wi_headlog.sh $LOGDIR
 c_begin_time_sec=`date +%s`
 echo -e "*init \t $(date)"
 DUMPDBDIR=/app/oracle/backups/dumps/
+JKTDUMPDBDIR=/disk1/bckitc/
 BCKDIR=$_MYPARENTDIR/backup
 TWODAYAGOFILE=$(date +%Y%m%d -d "2 day ago")
 nir=--no-inc-recursive
@@ -40,6 +42,16 @@ ssh root@192.168.51.59 -p 1359 << EOSSH
 	find $DUMPDBDIR -maxdepth 1 -mtime +7 -exec rm -rf {} \;
   rm $DUMPDBDIR'syr'$TWODAYAGOFILE'.tgz'
   rm $DUMPDBDIR'ddls'$TWODAYAGOFILE'.tgz'
+EOSSH
+#0.3
+echo -e "*3 \t $(date)"
+echo "$JKTDUMPDBDIR"*.7z
+echo $BCKDIR/0.3/dump/
+$_MYDIR/utils/wi_mkdir.sh $BCKDIR/0.3/dump/
+rsync -avhPW $nir -e "ssh -p 55133" root@192.168.0.3:"$JKTDUMPDBDIR"*.7z $BCKDIR/0.3/dump/
+ssh root@192.168.0.3 -p 55133 << EOSSH
+	find $JKTDUMPDBDIR -maxdepth 1 -mtime +7 -exec rm -rf {} \;
+	rm $JKTDUMPDBDIR'*'$TWODAYAGOFILE'.7z'
 EOSSH
 #
 echo -e "*finish \t $(date)"

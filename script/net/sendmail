@@ -27,8 +27,9 @@ ISSEND=`tail -n 1 $LOGFILE`
 
 if ! [ "${ISSEND:0:4}" = "SENT" ]; then
   MAILALIAS=`hostname`
+  MAILMODE=`$_MYDIR/servermode.sh`
   MAILSEND=`cat $_MYDIR/emailsender`
-  MAILRECP=`sed -n "/\["desktop"\]/,/\[/p" $_MYDIR/listemailrec.txt | head -n-2 | tail -n+2 | grep -v "#"`
+  MAILRECP=`sed -n "/\["$MAILMODE"\]/,/\[/p" $_MYDIR/listemailrec.txt | head -n-2 | tail -n+2 | grep -v "#"`
   MAILCMD=$( [[ "$2" = "trace" ]] && echo " -v " || echo " " )
   MAILCMD="mail"$MAILCMD"-s \"$MAILSUBJ\" -r$MAILALIAS'<'$MAILSEND'>' $MAILRECP"
   grep "$1" $LOGFILE | sed 's/'"$1"'//;s/^[[:space:]]*//' | eval $MAILCMD
